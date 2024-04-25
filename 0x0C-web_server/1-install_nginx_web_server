@@ -1,32 +1,36 @@
-#!/usr/bin/env bash
-# Configures a new ubuntu machine by installing
-# Nginx where it should be listening on port 80
-# Serve a page that would return a Hello World string
-#
+#!/bin/bash
 
-echo -e "Updating and installing Nginx.\n"
-sudo apt-get update -y -qq && \
-	 sudo apt-get install nginx -y
+# Update package index
+apt-get update -y
 
-echo -e "\nSetting up some minor stuff.\n"
+# Install nginx
+apt-get install nginx -y
 
-# starting nginx service
-sudo service nginx start
+# Create a default index.html file with "Hello World!" content
+echo "Hello World!" > /var/www/html/index.html
 
-# allowing nginx on firewall
-sudo ufw allow 'Nginx HTTP'
+# Check if nginx is running and restart if necessary
+if pgrep "nginx" >/dev/null; then
+    killall nginx
+fi
 
-# Give the user ownership to website files for easy editing
-sudo chown -R "$USER":"$USER" /var/www/html
-sudo chmod -R 755 /var/www
+# Start nginx
+nginx
 
-# Backup default index
-cp /var/www/html/index.nginx-debian.html /var/www/html/index.nginx-debian.html.bckp
+# Verify nginx is listening on port 80
+netstat -tnl | grep ':80' > /dev/null
+if [ $? -eq 0 ]; then
+    echo "Nginx is listening on port 80."
+else
+    echo "Nginx is not listening on port 80."
+    exit 1
+fi
 
-# Creating new index
-echo -e "Hello World!" | dd status=none of=/var/www/html/index.nginx-debian.html
-
-# Restarting nginx
-sudo service nginx restart
-
-echo -e "\nCompleted. ✅\n"
+# Verify the nginx root URL returns "Hello World!"
+response=$(curl -s http://localhost)
+if [[ "$response" == "Hello World!" ]]; then
+    echo "Nginx root URL returns 'Hello World!'."
+else
+    echo "Nginx root URL does not return 'Hello World!'."
+    exit 1
+fi
