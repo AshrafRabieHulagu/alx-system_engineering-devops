@@ -8,11 +8,3 @@ Host *
     HashKnownHosts yes
     GSSAPIAuthentication yes
     GSSAPIDelegateCredentials no
-
-# SSH Config File
-#
-Host web-01
-        Hostname 52.91.152.5	
-	User ubuntu
-	PasswordAuthentication no
-	IdentityFile ~/.ssh/school
