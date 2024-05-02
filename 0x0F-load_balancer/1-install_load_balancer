@@ -17,8 +17,8 @@ backend myawesomeproject.tech_backend
     timeout connect  3000
     timeout server  30000
     balance roundrobin
-    server 228560-web-01 52.201.146.255 check
-    server 228560-web-02 100.25.37.226 check
+    server 228560-web-01 52.91.152.5 check
+    server 228560-web-02 54.174.75.103 check
 EOT
 
 sudo service haproxy restart
