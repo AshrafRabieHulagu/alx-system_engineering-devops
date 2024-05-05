@@ -1,10 +1,7 @@
 #!/usr/bin/env bash
-# Install nginx and update default server configuracion
+# configure servers web-02 to be identical to web-01
+
 sudo apt-get update
-sudo apt-get -y install nginx
-sudo ufw allow 'Nginx HTTP'
-echo "Holberton School" > '/var/www/html/index.nginx-debian.html'
-echo "Ceci n'est pas une page" > /var/www/html/404.html
-new_redirect="server_name _;\n\trewrite /redirect_me https://www.youtube.com/watch?v=QH2-TGUlwu4 permanent;\n\terror_page 404 /404.html;\n\tadd_header X-Served-By $HOSTNAME;\n"
-sed -i 's|server_name _;|'"$new_redirect"'|' /etc/nginx/sites-enabled/default
-sudo service nginx restart
+sudo apt-get install -y nginx
+sudo sed -i "52i\add_header X-Served-By $HOSTNAME always;" /etc/nginx/sites-available/default
+sudo service nginx start
