@@ -1,31 +1,10 @@
 #!/usr/bin/env bash
-# Configures a brand new ubuntu machine to the requirements needed for
-# servers behind a load balancer.
-
-apt-get update
-apt-get install -y nginx
-
-mkdir -p /var/www/html
-cd /var/www/html; touch index.html 404.html
-echo "Hello World!" > index.html
-echo "Ceci n'est pas une page" > 404.html; cd -
-
-echo "server {
-	listen 80 default_server;
-	listen [::]:80 default_server;
-	add_header X-Served-By $HOSTNAME;
-	root /var/www/html;
-	index index.html index.htm;
-
-	location /redirect_me {
-	return 301 https://www.digitalocean.com/community/tutorials/how-to-set-up-nginx-server-blocks-virtual-hosts-on-ubuntu-16-04;
-	}
-	
-	error_page 404 /404.html;
-	location /404 {
-	root /var/www/html;
-	internal;
-	}
-}" > /etc/nginx/sites-available/default
-
-service nginx restart
+# Install nginx and update default server configuracion
+sudo apt-get update
+sudo apt-get -y install nginx
+sudo ufw allow 'Nginx HTTP'
+echo "Holberton School" > '/var/www/html/index.nginx-debian.html'
+echo "Ceci n'est pas une page" > /var/www/html/404.html
+new_redirect="server_name _;\n\trewrite /redirect_me https://www.youtube.com/watch?v=QH2-TGUlwu4 permanent;\n\terror_page 404 /404.html;\n\tadd_header X-Served-By $HOSTNAME;\n"
+sed -i 's|server_name _;|'"$new_redirect"'|' /etc/nginx/sites-enabled/default
+sudo service nginx restart
