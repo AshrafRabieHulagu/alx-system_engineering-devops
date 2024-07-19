@@ -3,9 +3,6 @@
 the project 0x16. API advanced soultion
 Submitted by: Ashraf Rabie Hulagu
 
-"""
-    How many subs
-"""
 import requests
 
 
