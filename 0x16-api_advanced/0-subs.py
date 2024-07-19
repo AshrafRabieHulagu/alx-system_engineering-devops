@@ -1,26 +1,16 @@
 #!/usr/bin/python3
-"""This script will return the number of subscribers associated with
-a subreddit
-"""
+"""Function to query subscribers on a given Reddit subreddit."""
 import requests
-from sys import argv
 
 
 def number_of_subscribers(subreddit):
-    """Method get the number of users subscribed to a subreddit
-
-    subreddit (Str)- subreddit to check
-
-    Returns - number of users (INT) else 0 (INT) if not subreddit is found
-    """
-    try:
-        h = {'user-agent': 'Mozilla/5.0', 'allow_redirects': 'false'}
-        url = "https://www.reddit.com/r/{}/about.json".format(subreddit)
-        req = requests.get(url, headers=h)
-        return req.json().get('data').get('subscribers', 0)
-    except Exception as e:
+    """Return the total number of subscribers on a given subreddit."""
+    url = "https://www.reddit.com/r/{}/about.json".format(subreddit)
+    headers = {
+        "User-Agent": "linux:0x16.api.advanced:v1.0.0 (by /u/bdov_)"
+    }
+    response = requests.get(url, headers=headers, allow_redirects=False)
+    if response.status_code == 404:
         return 0
-
-
-if __name__ == "__main__":
-    pass
+    results = response.json().get("data")
+    return results.get("subscribers")
