@@ -1,24 +1,26 @@
 #!/usr/bin/python3
-
-
-'''
-0-subs.py - a function that queries reddit
-API with total subscribers count as response
-'''
+"""Module that scrapes reddit api"""
 
 import requests
 
 
 def number_of_subscribers(subreddit):
-    """Queries the Reddit API and returns the number of
-    subscribers for the 'programming' subreddit
     """
-    url = 'https://www.reddit.com/r/{}/about.json'.format(subreddit)
-    headers = {"User-Agent": "0-subs/1.0"}
-    response = requests.get(url, headers=headers)
-    if response.status_code == 200:
-        data = response.json()
-        subscribers = data['data']['subscribers']
-        return subscribers
+       Scrapes reddit api and gets the number of subscribers
+    """
+    if subreddit is None or not isinstance(subreddit, str):
+        return 0
+    header = {'User-Agent': 'Get subscribers info'}
+    url = f'https://www.reddit.com/r/{subreddit}/about.json'
+
+    data = requests.get(url, headers=header, allow_redirects=False)
+
+    if data.status_code == 200:
+        try:
+            data = data.json()
+            subscribers = data['data']['subscribers']
+            return subscribers
+        except (KeyError, ValueError):
+            return 0
     else:
         return 0
