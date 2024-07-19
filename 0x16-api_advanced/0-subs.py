@@ -1,25 +1,19 @@
 #!/usr/bin/python3
 """
-    Uses the reddit API for get the all hot posts
+    Uses the reddit API to print the number of subscribers of a subreddit
 """
 import requests
 from sys import argv
 
 
-def recurse(subreddit, hot_list=[], after=""):
-    """Get the all host posts"""
-    if after is None:
-        return []
-
-    url_sred_inf = "https://www.reddit.com/r/{}/hot.json".format(subreddit)
-    url_sred_inf += "?limit=100&after={}".format(after)
+def number_of_subscribers(subreddit):
+    """Get the numbers of subscribers by subreddit given"""
+    url_sred_inf = "https://www.reddit.com/r/{}/about.json".format(subreddit)
     headers = {'user-agent': 'request'}
     response = requests.get(url_sred_inf, headers=headers,
                             allow_redirects=False)
     if str(response) != "<Response [200]>":
-        return None
+        return 0
     r_json = response.json()
-    hot_posts_json = r_json.get("data").get("children")
-    for post in hot_posts_json:
-        hot_list.append(post.get("data").get("title"))
-    return hot_list + recurse(subreddit, [], r_json.get("data").get("after"))
+    num_subs = r_json.get("data").get("subscribers")
+    return num_subs
