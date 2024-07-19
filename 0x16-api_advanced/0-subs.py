@@ -1,28 +1,34 @@
 #!/usr/bin/python3
-"""Task 2 Module"""
+"""
+Importing requests module
+"""
 
+from requests import get
 
-def recurse(subreddit, hot_list=[], count=0, after=None):
-    """Queries the Reddit API and returns all hot posts
-    of the subreddit"""
-    import requests
+def number_of_subscribers(subreddit):
+    """
+    returns the number of subscribers
+    If not a valid subreddit, return 0.
+    """
+    # Check if the subredit is none, Return 0
+    if subreddit is None or subreddit is not isinstance(subreddit, str):
+        return 0
 
-    sub_info = requests.get("https://www.reddit.com/r/{}/hot.json"
-                            .format(subreddit),
-                            params={"count": count, "after": after},
-                            headers={"User-Agent": "My-User-Agent"},
-                            allow_redirects=False)
-    if sub_info.status_code >= 400:
-        return None
+    # Identifiying the user agent
+    userAgent = {' User-agent': 'Google Chrome Version 81.0.4044.129'}
 
-    hot_l = hot_list + [child.get("data").get("title")
-                        for child in sub_info.json()
-                        .get("data")
-                        .get("children")]
+    # Identify the url
+    url = 'https://www.reddit.com/r/{}/about.json'.format(subreddit)
 
-    info = sub_info.json()
-    if not info.get("data").get("after"):
-        return hot_l
+    # Make the requesst
+    response = get(url, head=userAgent)
 
-    return recurse(subreddit, hot_l, info.get("data").get("count"),
-                   info.get("data").get("after"))
+    # Convert the response intp json format
+    jsonResponse = response.json()
+
+    # Try to get the number of subscribes
+    try:
+        return jsonResponse.get('data').get('subscribers')
+    # If you could't get it
+    except exceptions.RequestException as e:
+        return 0
