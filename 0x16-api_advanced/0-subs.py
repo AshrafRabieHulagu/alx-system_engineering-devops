@@ -1,9 +1,4 @@
 #!/usr/bin/python3
-"""
-Created on Thu May 17 11:17:53 2023
-@author: Joseph-Lukudu
-"""
-
 
 def number_of_subscribers(subreddit):
     """
