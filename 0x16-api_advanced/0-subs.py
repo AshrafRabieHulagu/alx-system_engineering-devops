@@ -1,18 +1,16 @@
 #!/usr/bin/python3
-"""Module for quering the reddit API"""
-
+"""
+returns the number of subscribers (not active users, total subscribers)
+"""
 import requests
 
 
 def number_of_subscribers(subreddit):
-    """Queries the Reddit API and returns the number of
-       subscribers to the subreddit"""
-
-    sub_info = requests.get("https://www.reddit.com/r/{}/about.json"
-                            .format(subreddit),
-                            headers={"User-Agent": "My-User-Agent"},
-                            allow_redirects=False)
-    if sub_info.status_code >= 300:
-        return 0
-
-    return sub_info.json().get("data").get("subscribers")
+    """returns the number of subscribers of a subreddit"""
+    if subreddit is None:
+        return (0)
+    url = "https://www.reddit.com/r/{}/about.json".format(subreddit)
+    headers = {'user-agent': 'API Project by andreshugueth'}
+    r = requests.get(url, headers=headers).json()
+    subscribers = r.get("data", {}).get("subscribers", 0)
+    return subscribers
