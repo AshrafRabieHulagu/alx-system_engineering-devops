@@ -1,17 +1,17 @@
 #!/usr/bin/python3
-"""handle requests"""
+"""
+This is our model
+"""
 import requests
 
 
 def number_of_subscribers(subreddit):
-    """queries the Reddit API"""
-    if not subreddit or type(subreddit) is not str:
+    """
+    This is our function
+    """
+    url = "https://www.reddit.com/r/{}/about.json".format(subreddit)
+    r = requests.get(url)
+    if r.status_code == 404:
         return 0
-    URL = f"http://www.reddit.com/r/{subreddit}/about.json"
-    HEAD = {'User-Agent': 'Hi/0.0'}
-    R = requests.get(URL, headers=HEAD)
-    if R.status_code == 200:
-        R = R.json()
-    else:
-        return 0
-    return R['data']['subscribers']
+    r_json = r.json()
+    return r_json.get("data").get("subscribers")
