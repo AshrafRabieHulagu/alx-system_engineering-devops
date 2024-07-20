@@ -1,23 +1,17 @@
 #!/usr/bin/python3
-"""
-function that queries the Reddit API.
-"""
-
+"""handle requests"""
 import requests
 
 
 def number_of_subscribers(subreddit):
-    """URL for the subreddit's about.json endpoint"""
-    url = 'https://www.reddit.com/r/{}/about.json'.format(subreddit)
-    headers = {'User-Agent': 'Mozilla/5.0'}
-
-    try:
-        response = requests.get(url, headers=headers, allow_redirects=False)
-
-        if response.status_code == 200:
-            data = response.json()
-            return data['data']['subscribers']
-        else:
-            return 0
-    except requests.RequestException:
+    """queries the Reddit API"""
+    if not subreddit or type(subreddit) is not str:
         return 0
+    URL = f"http://www.reddit.com/r/{subreddit}/about.json"
+    HEAD = {'User-Agent': 'Hi/0.0'}
+    R = requests.get(URL, headers=HEAD)
+    if R.status_code == 200:
+        R = R.json()
+    else:
+        return 0
+    return R['data']['subscribers']
