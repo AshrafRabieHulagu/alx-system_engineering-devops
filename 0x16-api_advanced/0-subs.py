@@ -1,17 +1,16 @@
 #!/usr/bin/python3
 """
-This is our model
+returns the number of subscribers (not active users, total subscribers)
 """
 import requests
 
 
 def number_of_subscribers(subreddit):
-    """
-    This is our function
-    """
+    """returns the number of subscribers of a subreddit"""
+    if subreddit is None:
+        return (0)
     url = "https://www.reddit.com/r/{}/about.json".format(subreddit)
-    r = requests.get(url)
-    if r.status_code == 404:
-        return 0
-    r_json = r.json()
-    return r_json.get("data").get("subscribers")
+    headers = {'user-agent': 'API Project by andreshugueth'}
+    r = requests.get(url, headers=headers).json()
+    subscribers = r.get("data", {}).get("subscribers", 0)
+    return subscribers
