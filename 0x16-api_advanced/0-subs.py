@@ -1,18 +1,21 @@
 #!/usr/bin/python3
-""" This file will be API"""
+"""
+    How many subs
+"""
 import requests
-import sys
 
 
 def number_of_subscribers(subreddit):
-    """ gets the number of subscribers for the given subreddit"""
-    if subreddit is None:
+    """
+    returns the number of subscribers
+
+    Args:
+        subreddit (string): Particular topic
+    """
+    url = 'https://api.reddit.com/r/{}/about'.format(subreddit)
+    headers = {'User-Agent': 'Alien'}
+    response = requests.get(url, headers=headers).json()
+    try:
+        return response.get('data').get('subscribers')
+    except Exception:
         return 0
-    url = "https://www.reddit.com/r/" + str(subreddit) + "/about.json"
-    headers = {'User-Agent': 'Sel'}
-    r = requests.get(url, headers=headers, allow_redirects=False)
-    if r.status_code != 200:
-        return 0
-    rj = r.json()
-    rjd = rj.get('data')
-    return rjd.get('subscribers')
