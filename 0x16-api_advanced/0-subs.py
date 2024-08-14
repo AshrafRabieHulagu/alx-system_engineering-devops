@@ -1,27 +1,17 @@
 #!/usr/bin/python3
-"""
-    Funtion that print number of subscribers if subredit exist
-"""
-import json
+""" return total number of subscribers"""
+
 import requests
 
 
 def number_of_subscribers(subreddit):
+    """ Queries the  Reddit API & return nUmber of subs """
+    if subreddit:
+        res = requests.get(
+                'http://www.reddit.com/r/{}/about.json'.format(subreddit),
+                headers={'User-Agent': 'Python/requests:APIproject:\
+                        v1.0.0 (by /u/aaorrico23)'}).json()
 
-    # URL's to get all information
-    url = 'https://www.reddit.com/'
-    url_subreddit = (url + '/r/' + subreddit + '/about.json')
-    headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)\
-    AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36"}
-
-    # Get data response whit requests
-    r_subreddit = requests.get(url_subreddit, headers=headers)
-    # Set string to JSON
-    obj_subreddit = r_subreddit.json()
-
-    # Print number of subscribers
-    if r_subreddit.status_code == 200:
-        subscribers = obj_subreddit['data']['subscribers']
-        return (subscribers)
-    else:
-        return 0
+        sub = res.get("data", {}).get("subscribers", 0)
+        return sub
+    return 0
