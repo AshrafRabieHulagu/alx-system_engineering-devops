@@ -1,17 +1,28 @@
 #!/usr/bin/python3
-"""Module for task 0"""
+
+"""
+Queries the Reddit API
+and returns the number of subscribers for a given subreddit
+"""
+
+import base64
+import requests
+from urllib.parse import quote
+
+BASE = 'https://www.reddit.com/r/'
+CLIENT_ID = "gjV8WEVc3awcbN00hZLVpdD6gbo3_A"
 
 
 def number_of_subscribers(subreddit):
-    """Queries the Reddit API and returns the number of subscribers
-    to the subreddit"""
-    import requests
-
-    sub_info = requests.get("https://www.reddit.com/r/{}/about.json"
-                            .format(subreddit),
-                            headers={"User-Agent": "My-User-Agent"},
-                            allow_redirects=False)
-    if sub_info.status_code >= 300:
+    """function"""
+    headers = {
+        'User-Agent': 'my-app/0.0.1/220942',
+        'Authorization':
+        "Basic " +
+        base64.b64encode((quote(CLIENT_ID) + ":").encode()).decode()}
+    data = requests.get(BASE + str.format("{}/about.json",
+                        subreddit), headers=headers,
+                        allow_redirects=False)
+    if data.status_code != 200:
         return 0
-
-    return sub_info.json().get("data").get("subscribers")
+    return data.json().get('data').get('subscribers')
