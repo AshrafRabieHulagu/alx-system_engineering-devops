@@ -1,23 +1,23 @@
 #!/usr/bin/python3
-"""A function that queries the Reddit API and returns the number of subscribers
-(not active users, total subscribers) for a given subreddit.
+"""
+function that queries the Reddit API.
 """
 
 import requests
 
 
 def number_of_subscribers(subreddit):
-    """Get total subscriber of a given subreddit"""
-    url = "https://www.reddit.com/r/{}/about.json".format(subreddit)
+    """URL for the subreddit's about.json endpoint"""
+    url = 'https://www.reddit.com/r/{}/about.json'.format(subreddit)
+    headers = {'User-Agent': 'Mozilla/5.0'}
 
-    headers = requests.utils.default_headers()
-    """Change client's User-Agent string to something unique and descriptive
-    as required by Reddit API terms"""
-    headers.update({'User-Agent': 'Temz User Agent version 1.0'})
-    r = requests.get(url, headers=headers).json()
-    t_subscriber = r.get("data", {}).get("subscribers")
+    try:
+        response = requests.get(url, headers=headers, allow_redirects=False)
 
-    if not t_subscriber:
+        if response.status_code == 200:
+            data = response.json()
+            return data['data']['subscribers']
+        else:
+            return 0
+    except requests.RequestException:
         return 0
-    else:
-        return t_subscriber
