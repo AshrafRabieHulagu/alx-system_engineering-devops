@@ -1,15 +1,4 @@
 #!/usr/bin/env bash
-# Script to gracefully reload Gunicorn
+# Gracefully reloads Gunicorn.
 
-# Step 1: Determine the Gunicorn master process ID
-GUNICORN_PID=$(pgrep -f 'gunicorn.*:app')  # Adjust the regex to match your Gunicorn command
-
-if [ -z "$GUNICORN_PID" ]; then
-    echo "Gunicorn is not running."
-    exit 1
-fi
-
-# Step 2: Send the HUP signal to the Gunicorn master process
-kill -HUP "$GUNICORN_PID"
-
-echo "Gunicorn reloaded gracefully."
+pgrep gunicorn | xargs kill -HUP
