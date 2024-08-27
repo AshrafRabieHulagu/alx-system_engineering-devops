@@ -1,26 +1,42 @@
 #!/usr/bin/env bash
-# Customizing a 404-error_page
+# Installs Nginx with the following confgurations:
+#+    Listens on port 80.
+#+    Returns a page containing "Hello World!" when queried
+#+     at the root with a curl GET request.
+# Configures /redirect_me as a "301 Moved Permanently".
+# Includes a custom 404 page containing "CeCi n'est pas une page".
 
-# Updating Packages before performing installations
-sudo apt-get update
-sudo apt-get install -y nginx
+apt-get update
+apt-get install -y nginx
 
-# Creating an index.html page
-echo "Hello World!" | sudo tee /var/www/html/index.html
+mkdir /etc/nginx/html
+touch /etc/nginx/html/index.html
+echo "Hello World!" > /etc/nginx/html/index.html
+touch /etc/nginx/html/404.html
+echo "CeCi n'est pas une page" > /etc/nginx/html/404.html
 
-# Performing a "moved permanently redirection" (301)
-new_string="server_name _;\n\trewrite ^\/redirect_me https:\/\/github.com\/AshrafRabieHulagu permanent;"
-sudo sed -i "s/server_name _;/$new_string/" /etc/nginx/sites-enabled/default
+printf %s "server {
+     listen 80;
+     listen [::]:80 default_server;
+     add_header X-Served-By $HOSTNAME;
 
-# Creating a 404 Custom error page
-echo "Ceci n'est pas une page" | sudo tee /var/www/html/404.html
-new_string="listen 80 default_server;\n\terror_page 404 \/404.html;\n\tlocation = \/404.html {\n\t\troot \/var\/www\/h\
-tml;\n\t\tinternal;\n\t}"
+     root   /etc/nginx/html;
+     index  index.html index.html;
 
-sudo sed -i "s/listen 80 default_server;/$new_string/" /etc/nginx/sites-enabled/default
+     location /redirect_me {
+         return 301 http://cuberule.com/;
+     }
+     error_page 404 /404.html;
 
-# Testing configurations for syntax errors
-sudo nginx -t
+     location /redirect_me {
+         return 301 http://cuberule.com/;
+     }
 
-# restart nginx after implementing changes
-sudo service nginx restart
+     error_page 404 /404.html;
+     location /404 {
+       root /etc/nginx/html;
+       internal;
+     }
+}" > /etc/nginx/sites-available/default
+
+service nginx restart
